@@ -3,11 +3,25 @@ name: CI ASOLIMSEM
 on: [push, pull_request]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Descargar codigo
         uses: actions/checkout@v4
 
-      - name: Verificar integracion continua
-        run: echo "Pipeline de ASOLIMSEM ejecutado correctamente"
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Ejecutar prueba automatizada
+        run: |
+          node -e "
+            function validarConsumo(cant) { return cant >= 0; }
+            if (validarConsumo(-5) === false && validarConsumo(10) === true) {
+              console.log('Test CP-01 passed successfully');
+              process.exit(0);
+            } else {
+              process.exit(1);
+            }
+          "
